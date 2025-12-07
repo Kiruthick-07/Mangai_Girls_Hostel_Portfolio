@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Mangai Girls Hostel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="login.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+
+    <section class="auth-section">
+        <div class="auth-bg"></div>
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Welcome Back</h2>
+                    <p>Enter your details to access your account</p>
+                </div>
+
+                <form class="auth-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-wrapper">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                <polyline points="22,6 12,13 2,6" />
+                            </svg>
+                            <input type="email" id="email" placeholder="name@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="password">Password</label>
+                            
+                        </div>
+                        <div class="input-wrapper">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            <input type="password" id="password" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+
+
+                </form>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="signin.html">Sign up</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

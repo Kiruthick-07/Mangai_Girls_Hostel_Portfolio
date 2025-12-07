@@ -215,7 +215,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     })
   }, 100)
+
+  // Active nav link on scroll
+  updateActiveNavLink()
 })
+
+
 
 //Payment Gateway Integrated
 async function initiatePayment(amount) {
@@ -294,3 +299,43 @@ document.querySelectorAll('.btn-room').forEach(button => {
     }
   });
 });
+
+// Login Form Handling
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const submitBtn = loginForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerText;
+
+    submitBtn.innerHTML = 'Signing In...';
+    submitBtn.disabled = true;
+
+    setTimeout(() => {
+      submitBtn.innerText = originalText;
+      submitBtn.disabled = false;
+      alert('Login functionality would be implemented here connecting to backend.');
+      // window.location.href = 'index.html'; // Redirect on success
+    }, 1500);
+  });
+}
+
+// Signup Form Handling
+const signupForm = document.getElementById('signupForm');
+if (signupForm) {
+  signupForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const submitBtn = signupForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerText;
+
+    submitBtn.innerHTML = 'Creating Account...';
+    submitBtn.disabled = true;
+
+    setTimeout(() => {
+      submitBtn.innerText = originalText;
+      submitBtn.disabled = false;
+      alert('Registration functionality would be implemented here connecting to backend.');
+      // window.location.href = 'login.html'; // Redirect on success
+    }, 1500);
+  });
+}

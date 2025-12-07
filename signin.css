@@ -1,0 +1,8 @@
+/* Reusing styles from login.css to ensure consistency */
+@import url('login.css');
+
+/* Specific overrides for Signup if needed */
+.auth-container {
+    max-width: 500px;
+    /* Slightly wider for signup form */
+}

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const Razorpay = require('razorpay');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const User = require('./models/User');
@@ -20,6 +21,15 @@ app.use(express.static('../')); // Serve frontend files
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.error('MongoDB Connection Error:', err));
+
+// Email transporter configuration
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
 
 // Routes
 
@@ -74,6 +84,40 @@ app.post('/login', async (req, res) => {
     } catch (error) {
         console.error('Login Error:', error);
         res.status(500).json({ message: 'Server error during login' });
+    }
+});
+
+// Contact Form Route
+app.post('/contact', async (req, res) => {
+    try {
+        const { name, email, subject, message } = req.body;
+
+        // Validate required fields
+        if (!name || !email || !message) {
+            return res.status(400).json({ message: 'Name, email, and message are required' });
+        }
+
+        // Email options
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: process.env.EMAIL_TO,
+            subject: subject || `Contact Form: Message from ${name}`,
+            html: `
+                <h2>New Contact Form Submission</h2>
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Subject:</strong> ${subject || 'No subject'}</p>
+                <p><strong>Message:</strong></p>
+                <p>${message}</p>
+            `
+        };
+
+        // Send email
+        await transporter.sendMail(mailOptions);
+        res.json({ message: 'Message sent successfully' });
+    } catch (error) {
+        console.error('Contact Form Error:', error);
+        res.status(500).json({ message: 'Error sending message' });
     }
 });
 

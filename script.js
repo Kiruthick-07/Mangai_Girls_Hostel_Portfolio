@@ -134,32 +134,51 @@ if (testimonialCards.length > 0) {
 
 // Contact form submission
 if (contactForm) {
-  contactForm.addEventListener("submit", (e) => {
+  contactForm.addEventListener("submit", async (e) => {
     e.preventDefault()
 
     // Get form data
     const formData = new FormData(contactForm)
     const data = Object.fromEntries(formData)
 
-    // Simulate form submission
+    // Get submit button
     const submitBtn = contactForm.querySelector(".btn-submit")
     const originalText = submitBtn.innerHTML
 
     submitBtn.innerHTML = "<span>Sending...</span>"
     submitBtn.disabled = true
 
-    setTimeout(() => {
-      submitBtn.innerHTML =
-        '<span>Message Sent!</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
-      submitBtn.style.background = "#10b981"
+    try {
+      const response = await fetch('http://localhost:5000/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
 
-      setTimeout(() => {
-        contactForm.reset()
+      const result = await response.json();
+
+      if (response.ok) {
+        submitBtn.innerHTML =
+          '<span>Message Sent!</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
+        submitBtn.style.background = "#10b981"
+
+        setTimeout(() => {
+          contactForm.reset()
+          submitBtn.innerHTML = originalText
+          submitBtn.disabled = false
+          submitBtn.style.background = ""
+        }, 2000)
+      } else {
+        alert(result.message || 'Failed to send message');
         submitBtn.innerHTML = originalText
         submitBtn.disabled = false
-        submitBtn.style.background = ""
-      }, 2000)
-    }, 1500)
+      }
+    } catch (error) {
+      console.error('Contact Form Error:', error);
+      alert('An error occurred. Please try again later.');
+      submitBtn.innerHTML = originalText
+      submitBtn.disabled = false
+    }
   })
 }
 

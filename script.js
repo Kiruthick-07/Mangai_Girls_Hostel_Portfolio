@@ -216,3 +216,81 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }, 100)
 })
+
+//Payment Gateway Integrated
+async function initiatePayment(amount) {
+  try {
+    const response = await fetch("http://localhost:5000/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amount: amount,
+        currency: "INR",
+        receipt: "receipt_" + Date.now()
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const order = await response.json();
+
+    var options = {
+      "key": "rzp_test_RMKz5sso9Q16ay",
+      "amount": order.amount,
+      "currency": order.currency,
+      "name": "Mangai Girls Hostel",
+      "description": "Room Booking Transaction",
+      "image": "https://example.com/your_logo", // Replace with valid logo URL if available
+      "order_id": order.id,
+      "handler": function (response) {
+        alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+        // You can add further logic here (e.g., save booking to database)
+      },
+      "prefill": {
+        "name": "", // Can be populated if user data is known
+        "email": "",
+        "contact": ""
+      },
+      "notes": {
+        "address": "Mangai Girls Hostel"
+      },
+      "theme": {
+        "color": "#3399cc"
+      }
+    };
+
+    var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response) {
+      alert("Payment Failed: " + response.error.description);
+    });
+    rzp1.open();
+
+  } catch (error) {
+    console.error("Error initiating payment:", error);
+    alert("Unable to initiate payment. Please try again later.");
+  }
+}
+
+// Attach event listeners to all "Book This Room" buttons
+document.querySelectorAll('.btn-room').forEach(button => {
+  button.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    // Find the price element within the same card
+    const card = this.closest('.room-card');
+    const priceText = card.querySelector('.price').textContent;
+
+    // Extract numeric value from text like "₹12,000" -> 12000
+    const amount = parseInt(priceText.replace(/[^0-9]/g, ''), 10);
+
+    if (amount) {
+      initiatePayment(amount);
+    } else {
+      console.error("Could not determine price for this room.");
+    }
+  });
+});

@@ -234,13 +234,40 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }, 100)
 
+  // Check login status and update navbar
+  updateNavbarLoginStatus()
+
   // Active nav link on scroll
   updateActiveNavLink()
 })
 
+// Function to update navbar based on login status
+function updateNavbarLoginStatus() {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const loginLink = document.getElementById('loginLink');
 
+  if (isLoggedIn === 'true' && user.fullName && loginLink) {
+    // User is logged in - change login button to show username
+    loginLink.textContent = user.fullName.split(' ')[0];
+    loginLink.style.cursor = 'default';
+    loginLink.onclick = (e) => e.preventDefault();
 
-//Payment Gateway Integrated
+    // Add logout button after the name
+    const logoutBtn = document.createElement('button');
+    logoutBtn.textContent = 'Logout';
+    logoutBtn.className = 'nav-cta';
+    logoutBtn.style.cssText = 'background: transparent; border: 1px solid var(--primary); color: var(--primary); margin-right: 10px;';
+    logoutBtn.onclick = () => {
+      localStorage.removeItem('user');
+      localStorage.removeItem('isLoggedIn');
+      alert('Logged out successfully');
+      window.location.reload();
+    };
+    loginLink.parentNode.insertBefore(logoutBtn, loginLink.nextSibling);
+  }
+}
+
 async function initiatePayment(amount) {
   try {
     const response = await fetch("http://localhost:5000/order", {
@@ -303,7 +330,17 @@ document.querySelectorAll('.btn-room').forEach(button => {
   button.addEventListener('click', function (e) {
     e.preventDefault();
 
-    // Find the price element within the same card
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+    if (!isLoggedIn || isLoggedIn !== 'true') {
+      // Not logged in - redirect to login page
+      alert('Please login to book a room');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    // User is logged in - proceed with booking
     const card = this.closest('.room-card');
     const priceText = card.querySelector('.price').textContent;
 
@@ -341,6 +378,10 @@ if (loginForm) {
       const data = await response.json();
 
       if (response.ok) {
+        // Store user session in localStorage
+        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('isLoggedIn', 'true');
+
         alert('Login Successful! Welcome ' + data.user.fullName);
         window.location.href = 'index.html';
       } else {

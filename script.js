@@ -267,23 +267,36 @@ function updateNavbarLoginStatus() {
   const loginLink = document.getElementById('loginLink');
 
   if (isLoggedIn === 'true' && user.fullName && loginLink) {
-    // User is logged in - change login button to show username
-    loginLink.textContent = user.fullName.split(' ')[0];
-    loginLink.style.cursor = 'default';
-    loginLink.onclick = (e) => e.preventDefault();
+    // Check if logout button already exists to prevent duplicates
+    const existingLogoutBtn = document.getElementById('logoutBtn');
+    if (existingLogoutBtn) return;
 
-    // Add logout button after the name
+    // Hide the login link
+    loginLink.style.display = 'none';
+
+    // Create username display
+    const userNameSpan = document.createElement('span');
+    userNameSpan.textContent = `Hi, ${user.fullName.split(' ')[0]}`;
+    userNameSpan.className = 'nav-cta';
+    userNameSpan.style.cssText = 'background: transparent; border: 1px solid var(--primary); color: var(--primary); cursor: default; margin-left: 0;';
+    userNameSpan.id = 'userNameDisplay';
+
+    // Create logout button
     const logoutBtn = document.createElement('button');
     logoutBtn.textContent = 'Logout';
     logoutBtn.className = 'nav-cta';
-    logoutBtn.style.cssText = 'background: transparent; border: 1px solid var(--primary); color: var(--primary); margin-right: 10px;';
+    logoutBtn.id = 'logoutBtn';
+    logoutBtn.style.cssText = 'background: var(--primary); border: 1px solid var(--primary); color: white; margin-left: 10px;';
     logoutBtn.onclick = () => {
       localStorage.removeItem('user');
       localStorage.removeItem('isLoggedIn');
       alert('Logged out successfully');
-      window.location.reload();
+      window.location.href = 'index.html';
     };
-    loginLink.parentNode.insertBefore(logoutBtn, loginLink.nextSibling);
+
+    // Insert both elements after the login link
+    loginLink.parentNode.insertBefore(userNameSpan, loginLink.nextSibling);
+    loginLink.parentNode.insertBefore(logoutBtn, userNameSpan.nextSibling);
   }
 }
 

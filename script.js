@@ -11,17 +11,21 @@ const testimonialCards = document.querySelectorAll(".testimonial-card")
 
 // Navbar scroll effect
 window.addEventListener("scroll", () => {
-  if (window.scrollY > 50) {
-    navbar.classList.add("scrolled")
-  } else {
-    navbar.classList.remove("scrolled")
+  if (navbar) {
+    if (window.scrollY > 50) {
+      navbar.classList.add("scrolled")
+    } else {
+      navbar.classList.remove("scrolled")
+    }
   }
 
   // Back to top button visibility
-  if (window.scrollY > 500) {
-    backToTopBtn.classList.add("visible")
-  } else {
-    backToTopBtn.classList.remove("visible")
+  if (backToTopBtn) {
+    if (window.scrollY > 500) {
+      backToTopBtn.classList.add("visible")
+    } else {
+      backToTopBtn.classList.remove("visible")
+    }
   }
 
   // Active nav link on scroll
@@ -29,28 +33,34 @@ window.addEventListener("scroll", () => {
 })
 
 // Mobile menu toggle
-mobileMenuBtn.addEventListener("click", () => {
-  mobileMenuBtn.classList.toggle("active")
-  mobileMenu.classList.toggle("active")
-  document.body.style.overflow = mobileMenu.classList.contains("active") ? "hidden" : ""
-})
+if (mobileMenuBtn) {
+  mobileMenuBtn.addEventListener("click", () => {
+    mobileMenuBtn.classList.toggle("active")
+    mobileMenu.classList.toggle("active")
+    document.body.style.overflow = mobileMenu.classList.contains("active") ? "hidden" : ""
+  })
+}
 
 // Close mobile menu on link click
-mobileLinks.forEach((link) => {
-  link.addEventListener("click", () => {
-    mobileMenuBtn.classList.remove("active")
-    mobileMenu.classList.remove("active")
-    document.body.style.overflow = ""
+if (mobileLinks) {
+  mobileLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      if (mobileMenuBtn) mobileMenuBtn.classList.remove("active")
+      if (mobileMenu) mobileMenu.classList.remove("active")
+      document.body.style.overflow = ""
+    })
   })
-})
+}
 
 // Back to top button
-backToTopBtn.addEventListener("click", () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
+if (backToTopBtn) {
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    })
   })
-})
+}
 
 // Update active nav link based on scroll position
 function updateActiveNavLink() {
@@ -94,56 +104,64 @@ navLinks.forEach((link) => {
 let currentTestimonial = 0
 
 function showTestimonial(index) {
-  testimonialCards.forEach((card, i) => {
-    card.classList.remove("active")
-    testimonialDots[i].classList.remove("active")
-  })
+  if (testimonialCards.length > 0 && testimonialDots.length > 0) {
+    testimonialCards.forEach((card, i) => {
+      card.classList.remove("active")
+      testimonialDots[i].classList.remove("active")
+    })
 
-  testimonialCards[index].classList.add("active")
-  testimonialDots[index].classList.add("active")
-  currentTestimonial = index
+    testimonialCards[index].classList.add("active")
+    testimonialDots[index].classList.add("active")
+    currentTestimonial = index
+  }
 }
 
-testimonialDots.forEach((dot, index) => {
-  dot.addEventListener("click", () => {
-    showTestimonial(index)
+if (testimonialDots.length > 0) {
+  testimonialDots.forEach((dot, index) => {
+    dot.addEventListener("click", () => {
+      showTestimonial(index)
+    })
   })
-})
+}
 
 // Auto-rotate testimonials
-setInterval(() => {
-  const nextIndex = (currentTestimonial + 1) % testimonialCards.length
-  showTestimonial(nextIndex)
-}, 5000)
+if (testimonialCards.length > 0) {
+  setInterval(() => {
+    const nextIndex = (currentTestimonial + 1) % testimonialCards.length
+    showTestimonial(nextIndex)
+  }, 5000)
+}
 
 // Contact form submission
-contactForm.addEventListener("submit", (e) => {
-  e.preventDefault()
+if (contactForm) {
+  contactForm.addEventListener("submit", (e) => {
+    e.preventDefault()
 
-  // Get form data
-  const formData = new FormData(contactForm)
-  const data = Object.fromEntries(formData)
+    // Get form data
+    const formData = new FormData(contactForm)
+    const data = Object.fromEntries(formData)
 
-  // Simulate form submission
-  const submitBtn = contactForm.querySelector(".btn-submit")
-  const originalText = submitBtn.innerHTML
+    // Simulate form submission
+    const submitBtn = contactForm.querySelector(".btn-submit")
+    const originalText = submitBtn.innerHTML
 
-  submitBtn.innerHTML = "<span>Sending...</span>"
-  submitBtn.disabled = true
-
-  setTimeout(() => {
-    submitBtn.innerHTML =
-      '<span>Message Sent!</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
-    submitBtn.style.background = "#10b981"
+    submitBtn.innerHTML = "<span>Sending...</span>"
+    submitBtn.disabled = true
 
     setTimeout(() => {
-      contactForm.reset()
-      submitBtn.innerHTML = originalText
-      submitBtn.disabled = false
-      submitBtn.style.background = ""
-    }, 2000)
-  }, 1500)
-})
+      submitBtn.innerHTML =
+        '<span>Message Sent!</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
+      submitBtn.style.background = "#10b981"
+
+      setTimeout(() => {
+        contactForm.reset()
+        submitBtn.innerHTML = originalText
+        submitBtn.disabled = false
+        submitBtn.style.background = ""
+      }, 2000)
+    }, 1500)
+  })
+}
 
 // Intersection Observer for animations
 const observerOptions = {
@@ -303,39 +321,97 @@ document.querySelectorAll('.btn-room').forEach(button => {
 // Login Form Handling
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
-  loginForm.addEventListener('submit', (e) => {
+  loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const submitBtn = loginForm.querySelector('button[type="submit"]');
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
     const originalText = submitBtn.innerText;
 
     submitBtn.innerHTML = 'Signing In...';
     submitBtn.disabled = true;
 
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Login Successful! Welcome ' + data.user.fullName);
+        window.location.href = 'index.html';
+      } else {
+        alert(data.message || 'Login Failed');
+      }
+    } catch (error) {
+      console.error('Login Error:', error);
+      alert('An error occurred during login.');
+    } finally {
       submitBtn.innerText = originalText;
       submitBtn.disabled = false;
-      alert('Login functionality would be implemented here connecting to backend.');
-      // window.location.href = 'index.html'; // Redirect on success
-    }, 1500);
+    }
   });
 }
 
 // Signup Form Handling
 const signupForm = document.getElementById('signupForm');
 if (signupForm) {
-  signupForm.addEventListener('submit', (e) => {
+  signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const submitBtn = signupForm.querySelector('button[type="submit"]');
+
+    // Get form fields
+    const fullNameField = document.getElementById('fullname');
+    const emailField = document.getElementById('email');
+    const phoneField = document.getElementById('phone');
+    const passwordField = document.getElementById('password');
+    const confirmPasswordField = document.getElementById('confirm-password');
+
+    // Check if all fields exist
+    if (!fullNameField || !emailField || !phoneField || !passwordField || !confirmPasswordField) {
+      console.error('Signup form fields not found');
+      return;
+    }
+
+    const fullName = fullNameField.value;
+    const email = emailField.value;
+    const phoneNumber = phoneField.value;
+    const password = passwordField.value;
+    const confirmPassword = confirmPasswordField.value;
     const originalText = submitBtn.innerText;
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
 
     submitBtn.innerHTML = 'Creating Account...';
     submitBtn.disabled = true;
 
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:5000/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullName, email, phoneNumber, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Account Created Successfully! Please Login.');
+        window.location.href = 'login.html';
+      } else {
+        alert(data.message || 'Registration Failed');
+      }
+    } catch (error) {
+      console.error('Signup Error:', error);
+      alert('An error occurred during registration.');
+    } finally {
       submitBtn.innerText = originalText;
       submitBtn.disabled = false;
-      alert('Registration functionality would be implemented here connecting to backend.');
-      // window.location.href = 'login.html'; // Redirect on success
-    }, 1500);
+    }
   });
 }
